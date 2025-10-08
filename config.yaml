@@ -1,4 +1,4 @@
-language: "uk"
+language: "en"
 
 wake_words:
   - "hanabi"
@@ -15,13 +15,13 @@ commands:
 avatar_actions:
   "hi":
     expression: "happy"
-    speak: "Привет, господин!"
+    speak: "Hello, darling!"
   "chill":
     motion: "idle"
-    speak: "Хорошего отдыха"
+    speak: "Have a nice day"
   "play":
     motion: "hammer"
-    speak: "Вжух-вжух!"
+    speak: "Bam-bam!"
 
 sensitivity:
   vad_threshold: 0.01

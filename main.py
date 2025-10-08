@@ -89,10 +89,7 @@ def main():
 
     # TTS
     tts = TTSEngine(
-        rvc_model_path=cfg.get("rvc", {}).get("model_path"),
-        rvc_index_path=cfg.get("rvc", {}).get("index_path"),
-        voice_index=1,
-        device='cpu'  # Явно указываем CPU для стабильности
+        voice="en-US-JennyNeural"
     )
 
     # Recognizer (Vosk)
@@ -144,12 +141,7 @@ def main():
 
     poll_recognized()
 
-    # --- Безкінечний цикл, щоб Python не виходив ---
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Exiting...")
+    return tts
 
 if __name__ == "__main__":
     thread = threading.Thread(target=run_server, daemon=True)
@@ -162,5 +154,13 @@ if __name__ == "__main__":
     # завантажуємо через http://
     view.load(QUrl(f"http://localhost:{PORT}/index.html"))
 
-    main()
-    sys.exit(app.exec_())
+    tts_engine = main()
+
+    # Запускаємо головний цикл застосунку. Програма "зависне" тут до закриття вікна.
+    exit_code = app.exec_()
+
+    # Коли вікно закрите, код нижче виконається:
+    print("Застосунок закривається, зупиняємо TTS...")
+    tts_engine.shutdown()
+
+    sys.exit(exit_code)

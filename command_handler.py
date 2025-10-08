@@ -45,7 +45,7 @@ class CommandHandler:
             if phrase in text:
                 print(f"🚀 Found program command: {phrase}")
                 self._run_program(info)
-                self.tts.speak(f"Запускаю")
+                self.tts.speak(f"Everything for you, master")
                 return True
 
         print(f"❌ No command found for: '{text}'")

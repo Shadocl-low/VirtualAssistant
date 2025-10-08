@@ -1,166 +1,92 @@
-import os
 import threading
-import tempfile
+import queue
+import asyncio
 import traceback
+import os
+import tempfile
+from playsound import playsound
+import edge_tts
 
+class TTSEngine:
+    def __init__(self, voice="uk-UA-PolinaNeural"):
+        """
+        Ініціалізує чергу та запускає потік-працівник для edge-tts.
+        """
+        self.queue = queue.Queue()
+        # Ви можете знайти інші голоси командою: edge-tts --list-voices
+        self.voice = voice
 
-class SimpleRVCTTSEngine:
-    def __init__(self, rvc_model_path=None, rvc_index_path=None, voice_index=1, device='cpu'):
-        self.voice_index = voice_index
-        self.is_speaking = False
-        self._current_thread = None
-        self.rvc_converter = None
-        self.use_rvc = False
-        print("🔊 Обычный TTS режим")
+        # Запускаємо потік-працівник
+        self.worker_thread = threading.Thread(target=self._process_queue, daemon=True)
+        self.worker_thread.start()
+        print(f"🔊 TTS (edge-tts) worker started with voice: {self.voice}")
+
+    def _process_queue(self):
+        """
+        Створює та запускає асинхронний цикл для обробки черги.
+        """
+        # Створюємо новий асинхронний цикл для цього потоку
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        # Запускаємо асинхронну функцію-працівника
+        try:
+            loop.run_until_complete(self._async_worker())
+        finally:
+            loop.close()
+
+    async def _async_worker(self):
+        """
+        Асинхронно отримує текст з черги, синтезує мову і відтворює її.
+        """
+        while True:
+            try:
+                # Асинхронно чекаємо на елемент з черги
+                text = await asyncio.to_thread(self.queue.get)
+
+                if text is None:
+                    break
+
+                print(f"🎯 TTS (edge-tts): Processing '{text}'")
+
+                # Синтезуємо мову
+                communicate = edge_tts.Communicate(text, self.voice)
+
+                # Створюємо тимчасовий файл для аудіо
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+                    tmp_filename = fp.name
+
+                # Асинхронно зберігаємо аудіо у файл
+                await communicate.save(tmp_filename)
+
+                # Відтворюємо звук (playsound - блокуюча функція)
+                try:
+                    playsound(tmp_filename)
+                except Exception as e:
+                    print(f"❌ Помилка відтворення звуку: {e}")
+                finally:
+                    # Гарантовано видаляємо тимчасовий файл
+                    os.remove(tmp_filename)
+
+                print("✅ TTS (edge-tts): Finished.")
+
+            except Exception as e:
+                print(f"❌ Помилка в TTS потоці-працівнику: {e}")
+                traceback.print_exc()
 
     def speak(self, text):
-        """Озвучить текст"""
+        """
+        Додає текст у чергу на озвучення.
+        """
         if not text or not text.strip():
             return
+        self.queue.put(text)
 
-        if self.is_speaking:
-            self.stop()
-
-        self.is_speaking = True
-        print(f"🎯 TTS: Обрабатываю '{text}'")
-
-        def _process():
-            try:
-                if self.use_rvc and self.rvc_converter:
-                    self._speak_with_rvc(text)
-                else:
-                    self._speak_direct(text)
-
-            except Exception as e:
-                print(f"❌ TTS Error: {e}")
-                traceback.print_exc()
-            finally:
-                self.is_speaking = False
-                print("✅ TTS: Завершено")
-
-        self._current_thread = threading.Thread(target=_process, daemon=True)
-        self._current_thread.start()
-
-    def _speak_with_rvc(self, text):
-        """Озвучка с RVC конвертацией"""
-        try:
-            # Создаем временные файлы
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_input:
-                temp_input_path = temp_input.name
-
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
-                temp_output_path = temp_output.name
-
-            # Шаг 1: Генерация базовой речи
-            print("🔊 Генерирую базовую речь...")
-            self._generate_base_speech(text, temp_input_path)
-
-            # Шаг 2: Конвертация через RVC
-            print("🔄 Конвертирую голос через RVC...")
-            converted_path = self.rvc_converter.convert_audio(
-                input_audio_path=temp_input_path,
-                output_path=temp_output_path,
-                f0_up_key=0
-            )
-
-            if converted_path and os.path.exists(converted_path):
-                # Шаг 3: Воспроизведение результата
-                print("▶️ Воспроизвожу результат...")
-                self._play_audio(converted_path)
-                print("🎉 RVC конвертация завершена!")
-            else:
-                print("❌ Конвертация не удалась, воспроизвожу оригинал")
-                self._play_audio(temp_input_path)
-
-            # Очистка временных файлов
-            self._cleanup_files([temp_input_path, temp_output_path])
-
-        except Exception as e:
-            print(f"❌ RVC обработка не удалась: {e}")
-            self._speak_direct(text)
-
-    def _speak_direct(self, text):
-        """Прямая озвучка без RVC"""
-        import pyttsx3
-
-        engine = pyttsx3.init()
-        engine.setProperty('rate', 180)
-        engine.setProperty('volume', 1.0)
-
-        voices = engine.getProperty('voices')
-        if voices and len(voices) > self.voice_index:
-            engine.setProperty('voice', voices[self.voice_index].id)
-
-        engine.say(text)
-        engine.runAndWait()
-
-    def _generate_base_speech(self, text, output_path):
-        """Генерация базовой речи для RVC"""
-        import pyttsx3
-
-        engine = pyttsx3.init()
-        engine.setProperty('rate', 180)
-        engine.setProperty('volume', 1.0)
-
-        voices = engine.getProperty('voices')
-        if voices and len(voices) > self.voice_index:
-            engine.setProperty('voice', voices[self.voice_index].id)
-
-        engine.save_to_file(text, output_path)
-        engine.runAndWait()
-
-    def _play_audio(self, audio_path):
-        """Воспроизведение аудио файла"""
-        try:
-            import pygame
-
-            if not pygame.mixer.get_init():
-                pygame.mixer.init()
-
-            pygame.mixer.music.load(audio_path)
-            pygame.mixer.music.play()
-
-            while pygame.mixer.music.get_busy():
-                threading.Event().wait(0.1)
-
-        except ImportError:
-            self._play_audio_system(audio_path)
-
-    def _play_audio_system(self, audio_path):
-        """Воспроизведение через системный плеер"""
-        import subprocess
-        import platform
-
-        system = platform.system().lower()
-        try:
-            if system == 'windows':
-                import winsound
-                winsound.PlaySound(audio_path, winsound.SND_FILENAME)
-            elif system == 'darwin':
-                subprocess.run(['afplay', audio_path], check=True)
-            else:
-                subprocess.run(['aplay', audio_path], check=True)
-        except Exception as e:
-            print(f"❌ Ошибка воспроизведения: {e}")
-
-    def _cleanup_files(self, file_paths):
-        """Очистка временных файлов"""
-        for file_path in file_paths:
-            try:
-                if os.path.exists(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(f"⚠️ Не удалось удалить файл {file_path}: {e}")
-
-    def stop(self):
-        """Остановить речь"""
-        self.is_speaking = False
-        print("⏹️ TTS: Остановлено")
-
-        try:
-            import pygame
-            pygame.mixer.music.stop()
-        except:
-            pass
-
-TTSEngine = SimpleRVCTTSEngine
+    def shutdown(self):
+        """
+        Коректно завершує роботу потоку-працівника.
+        """
+        print("⏹️ TTS: Завершення роботи...")
+        self.queue.put(None)
+        self.worker_thread.join(timeout=2)
+        print("TTS потік-працівник зупинено.")
