@@ -1,0 +1,30 @@
+language: "uk"
+
+wake_words:
+  - "hanabi"
+  - "cutie"
+  
+commands:
+  "open steam":
+    program: "D:\\Steam\\Steam.exe"
+    args: []
+  "open genshin":
+    program: "D:\\HoYoPlay\\games\\Genshin Impact game\\GenshinImpact.exe"
+    args: []
+
+avatar_actions:
+  "hi":
+    expression: "happy"
+    speak: "Привет, господин!"
+  "chill":
+    motion: "idle"
+    speak: "Хорошего отдыха"
+  "play":
+    motion: "hammer"
+    speak: "Вжух-вжух!"
+
+sensitivity:
+  vad_threshold: 0.01
+
+vosk:
+  model_path: "models/vosk-model-en-us-0.22"

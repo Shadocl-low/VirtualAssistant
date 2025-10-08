@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Live2D Avatar</title>
+  <style>
+    html, body {
+      background: transparent;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@5/dist/pixi.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/index.min.js"></script>
+
+<canvas id="live2d-canvas"></canvas>
+
+<script>
+  console.log('🚀 Starting Live2D application...');
+
+  let app = new PIXI.Application({
+    view: document.getElementById("live2d-canvas"),
+    transparent: true,
+    autoStart: true,
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  let model = null;
+
+  // Загружаем модель
+  async function loadModel() {
+    try {
+      console.log('📦 Loading model...');
+
+      // Добавляем timestamp для избежания кеширования
+      const timestamp = new Date().getTime();
+      const modelUrl = `./model/Sparkle.model3.json?t=${timestamp}`;
+
+      console.log(`📄 Loading model from: ${modelUrl}`);
+      const loadedModel = await PIXI.live2d.Live2DModel.from(modelUrl);
+
+      model = loadedModel;
+      model.scale.set(0.15);
+      model.anchor.set(0.5, 1.0);
+      model.position.set(window.innerWidth / 2, window.innerHeight / 0.62);
+
+      app.stage.addChild(model);
+      console.log('✅ Live2D model loaded successfully');
+
+      model.motion('idle');
+
+      app.ticker.add(() => {
+        if (model && !model.internalModel.motionManager.isPlaying) {
+          model.motion('idle');
+        }
+      });
+
+    } catch (err) {
+      console.error("❌ Model loading error:", err);
+    }
+  }
+
+  // Запускаем загрузку
+  loadModel();
+
+  // Обработка команд от Python
+  if (window.electronAPI) {
+    console.log('🔌 Electron API available');
+
+    window.electronAPI.onAvatarCommand((data) => {
+      console.log('📨 Received command:', data);
+
+      if (!model) {
+        console.log('❌ Model not ready yet');
+        return;
+      }
+
+      // Обработка параметров
+      if (data.param) {
+        console.log(`🎯 Setting param: ${data.param.name} = ${data.param.value}`);
+        try {
+          model.internalModel.coreModel.setParameterValueById(data.param.name, data.param.value);
+        } catch (e) {
+          console.error('❌ Error setting param:', e);
+        }
+      }
+
+      // Обработка выражений
+      if (data.expression) {
+        model.expression(data.expression);
+      }
+
+      // Обработка motions
+      if (data.motion) {
+        model.motion(data.motion);
+      }
+    });
+  } else {
+    console.error('❌ Electron API not available');
+  }
+
+</script>
+</body>
+</html>

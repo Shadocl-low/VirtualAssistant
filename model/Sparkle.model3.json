@@ -1,0 +1,60 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "Sparkle.moc3",
+		"Textures": [
+			"Sparkle.4096/texture_00.png",
+			"Sparkle.4096/texture_01.png",
+			"Sparkle.4096/texture_02.png",
+			"Sparkle.4096/texture_03.png",
+			"Sparkle.4096/texture_04.png",
+			"Sparkle.4096/texture_05.png"
+		],
+		"Physics": "Sparkle.physics3.json",
+		"DisplayInfo": "Sparkle.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "hammer",
+				"File": "expressions/hammer.exp3.json"
+			},
+			{
+				"Name": "happy",
+				"File": "expressions/happy.exp3.json"
+			},
+			{
+				"Name": "stand",
+				"File": "expressions/stand.exp3.json"
+			}
+		],
+		"Motions": {
+			"hammer": [
+				{
+					"File": "motions/hammer_play.motion3.json"
+				}
+			],
+			"blink": [
+				{
+					"File": "motions/scarry_blink.motion3.json"
+				}
+			],
+			"idle": [
+				{
+					"File": "motions/happy.motion3.json"
+				}
+			]
+		}
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	],
+	"HitAreas": []
+}

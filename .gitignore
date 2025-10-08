@@ -1,0 +1,44 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# ---- Node.js / Electron ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+
+# ---- IDE / Editors ----
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---- OS-specific ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+
+# ---- Live2D Models / Assets ----
+# keep JSON configs, but ignore big raw files if needed
+*.tmp
+*.bak
+
+# ---- Other ----
+Waifu.iml
+models/

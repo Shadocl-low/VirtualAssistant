@@ -1,0 +1,9 @@
+ParamBodyAngleY2 - *身体旋转　Z
+ParamBodyAngleZ2 - 身体旋转　Z1
+Param26 - 正常腿 - ножку поднять
+Param88 - 胸b - буби
+Param112 - 上臂L - рука
+ParamEyeLOpen - 左眼　开闭
+ParamMouthForm - 嘴　变形
+ParamMouthOpenY - 嘴　张开和闭合
+ParamMouthOpenY

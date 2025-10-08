@@ -1,0 +1,260 @@
+{
+	"Type": "Live2D Expression",
+	"Parameters": [
+		{
+			"Id": "ParamEyeLOpen",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamEyeROpen",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamEyeRSmile",
+			"Value": 1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamEyeLSmile",
+			"Value": 1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamAngleY",
+			"Value": -15.254,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamAngleZ",
+			"Value": 26.949,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param74",
+			"Value": 0.424,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param73",
+			"Value": 0.458,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param72",
+			"Value": 0.559,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param71",
+			"Value": -0.661,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param70",
+			"Value": -0.305,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param69",
+			"Value": 0.356,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param68",
+			"Value": -0.085,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param59",
+			"Value": 0.508,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param60",
+			"Value": -0.271,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param80",
+			"Value": 0.763,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param76",
+			"Value": -0.254,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param81",
+			"Value": 0.525,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param98",
+			"Value": -0.203,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param99",
+			"Value": -0.305,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param102",
+			"Value": 0.508,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param103",
+			"Value": -0.322,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param92",
+			"Value": 0.39,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param93",
+			"Value": -0.068,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamBodyAngleX",
+			"Value": 6.102,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamMouthForm",
+			"Value": 0.203,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param51",
+			"Value": 0.729,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param61",
+			"Value": 0.644,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param95",
+			"Value": 0.254,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param83",
+			"Value": -0.678,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param104",
+			"Value": -0.458,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param112",
+			"Value": 21.356,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param113",
+			"Value": 4.068,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param114",
+			"Value": 3.051,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param118",
+			"Value": 30,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param119",
+			"Value": 30,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param125",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param126",
+			"Value": -0.39,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param127",
+			"Value": -0.203,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param131",
+			"Value": 1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param130",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param129",
+			"Value": 0.271,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param128",
+			"Value": -0.068,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param47",
+			"Value": 0.051,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param48",
+			"Value": 0.254,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param35",
+			"Value": 0.288,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param36",
+			"Value": 0.017,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param39",
+			"Value": -0.458,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param32",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "Param34",
+			"Value": -1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "ParamBodyAngleX2",
+			"Value": 10,
+			"Blend": "Add"
+		}
+	]
+}
