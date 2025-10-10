@@ -3,64 +3,60 @@ import subprocess
 import os
 
 class CommandHandler:
-    def __init__(self, commands_map, avatar_actions, tts_engine, avatar):
-        self.commands = {k.lower(): v for k, v in commands_map.items()}
-        self.avatar_actions = {k.lower(): v for k, v in avatar_actions.items()}
+    def __init__(self, commands_config, tts_engine, avatar_client):
+        # Тепер ми приймаємо лише один словник з усіма командами
+        self.commands = {k.lower(): v for k, v in commands_config.items()}
         self.tts = tts_engine
-        self.avatar = avatar
-        print(f"🎯 CommandHandler: {len(self.avatar_actions)} avatar actions loaded")
+        self.avatar = avatar_client
+        print(f"🎯 CommandHandler: {len(self.commands)} total commands loaded.")
 
-    def handle(self, text):
+    def handle(self, text: str) -> bool:
+        """
+        Обробляє вхідний текст, шукає відповідну команду та виконує всі пов'язані з нею дії.
+        """
         text = text.lower().strip()
-        print(f"🔍 Processing: '{text}'")
 
-        # 1. Перевірка на аватар-команди (спочатку, бо вони швидші)
-        for phrase, action in self.avatar_actions.items():
+        # Єдиний цикл для всіх команд
+        for phrase, actions in self.commands.items():
             if phrase in text:
-                print(f"🎭 Found avatar action: {phrase}")
+                print(f"✅ Found command: '{phrase}'")
 
-                expr = action.get("expression")
-                motion = action.get("motion")
-                speech = action.get("speak")
+                # Отримуємо всі можливі дії з конфігу
+                program_to_run = actions.get("program")
+                expression_to_show = actions.get("expression")
+                motion_to_play = actions.get("motion")
+                text_to_speak = actions.get("speak")
 
-                # Обробка виразу
-                if expr:
-                    print(f"  → Sending expression: {expr}")
-                    self.avatar.send_expression(expr)
+                # 1. Запуск програми
+                if program_to_run:
+                    print(f"  → Running program: {program_to_run}")
+                    self._run_program(program_to_run)
 
-                # Обробка анімації
-                if motion:
-                    print(f"  → Sending motion: {motion}")
-                    self.avatar.send_motion(motion)
+                # 2. Надсилання виразу аватару
+                if expression_to_show:
+                    print(f"  → Sending expression: {expression_to_show}")
+                    self.avatar.send_expression(expression_to_show)
 
-                # Обробка мови
-                if speech:
-                    print(f"  → Speaking: {speech}")
-                    self.tts.speak(speech)
+                # 3. Надсилання анімації аватару
+                if motion_to_play:
+                    print(f"  → Sending motion: {motion_to_play}")
+                    self.avatar.send_motion(motion_to_play)
 
-                return True
+                # 4. Озвучення тексту
+                if text_to_speak:
+                    print(f"  → Speaking: '{text_to_speak}'")
+                    self.tts.speak(text_to_speak)
 
-        # 2. Перевірка на програмні команди
-        for phrase, info in self.commands.items():
-            if phrase in text:
-                print(f"🚀 Found program command: {phrase}")
-                self._run_program(info)
-                self.tts.speak(f"Everything for you, master")
-                return True
+                return True # Команду знайдено та оброблено, виходимо
 
-        print(f"❌ No command found for: '{text}'")
+        # Якщо жодна команда не знайдена, повертаємо False
+        # Це дозволить передати текст до LLM у main.py
         return False
 
-    def _run_program(self, info):
-        prog = info.get("program")
-        args = info.get("args", [])
+    def _run_program(self, program_path):
+        """Запускає зовнішню програму."""
         try:
-            if prog.lower().endswith(".exe") or os.path.isabs(prog):
-                subprocess.Popen([prog] + args, shell=False)
-            else:
-                try:
-                    os.startfile(prog)
-                except Exception:
-                    subprocess.Popen([prog] + args, shell=True)
+            # Popen є неблокуючим, що ідеально для асистента
+            subprocess.Popen([program_path], shell=False)
         except Exception as e:
-            print("Error launching:", e)
+            print(f"❌ Error launching program '{program_path}': {e}")

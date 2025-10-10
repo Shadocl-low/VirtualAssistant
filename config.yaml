@@ -1,27 +1,29 @@
 language: "en"
 
+electron_project_path: "electron"
+
 wake_words:
-  - "hanabi"
-  - "cutie"
+  - "sparkle"
+  - "hey sparkle"
   
 commands:
   "open steam":
     program: "D:\\Steam\\Steam.exe"
-    args: []
+    expression: "happy"
+    speak: "Sure, have a good time with games"
   "open genshin":
     program: "D:\\HoYoPlay\\games\\Genshin Impact game\\GenshinImpact.exe"
-    args: []
-
-avatar_actions:
-  "hi":
+    expression: "sad"
+    speak: "Why you need this game?"
+  "hello":
     expression: "happy"
     speak: "Hello, darling!"
-  "chill":
-    motion: "idle"
-    speak: "Have a nice day"
   "play":
     motion: "hammer"
     speak: "Bam-bam!"
+  "chill":
+    "motion": "start"
+    "speak": "Yes, master?"
 
 sensitivity:
   vad_threshold: 0.01

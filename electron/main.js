@@ -10,17 +10,17 @@ function createWindow() {
         y: 375,
         width: 600,
         height: 500,
-        transparent: true,
-        frame: false,
+        transparent: false,
+        frame: true,
         alwaysOnTop: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
-            contextIsolation: true
+            contextIsolation: true,
         }
     });
 
-    win.setIgnoreMouseEvents(true);
+
     win.loadURL("http://localhost:8000/index.html").catch(r => console.log(r.toString()));
 
 }

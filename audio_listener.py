@@ -4,12 +4,13 @@ import queue
 import time
 
 class AudioListener:
-    def __init__(self, samplerate=16000, blocksize=1600, audio_queue=None, level_queue=None):
+    def __init__(self, samplerate=16000, blocksize=1600, audio_queue=None, level_queue=None, cmd_handler=None):
         self.sr = samplerate
         self.block = blocksize
         self.audio_q = audio_queue
         self.level_q = level_queue
         self.stream = None
+        self.cmd_handler = cmd_handler
 
     def _callback(self, indata, frames, time_info, status):
         # `indata` - це сирий буфер (raw buffer), а не NumPy array.
@@ -37,6 +38,7 @@ class AudioListener:
             with sd.RawInputStream(channels=1, samplerate=self.sr, blocksize=self.block,
                                    callback=self._callback, dtype='int16'):
                 print("🎤 Audio listener started correctly...")
+                self.cmd_handler.handle("chill")
                 while True:
                     time.sleep(1)
         except Exception as e:

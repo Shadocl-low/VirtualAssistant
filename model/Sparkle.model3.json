@@ -37,7 +37,7 @@
 					"File": "motions/scarry_blink.motion3.json"
 				}
 			],
-			"idle": [
+			"start": [
 				{
 					"File": "motions/happy.motion3.json"
 				}

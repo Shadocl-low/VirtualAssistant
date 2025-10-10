@@ -81,8 +81,13 @@ def main():
     level_q = queue.Queue()
 
     # Запуск Electron
-    electron_path = cfg.get("electron_path", "electron")
-    subprocess.Popen(["npx", "electron", electron_path], shell=True)
+    electron_project_path = cfg.get("electron_project_path")
+    if electron_project_path:
+        print(f"🚀 Launching Electron from folder: '{electron_project_path}'...")
+        command = ["npx", "electron", "."]
+        subprocess.Popen(command, shell=True, cwd=electron_project_path)
+    else:
+        print("⚠️ 'electron_project_path' not found in config.yaml. Skipping Electron launch.")
 
     # Підключення до Electron через WebSocket
     avatar = AvatarClient()
@@ -93,18 +98,26 @@ def main():
     )
 
     # Recognizer (Vosk)
-    recognizer = VoskRecognizer(cfg["vosk"]["model_path"], audio_q, text_q, {**cfg.get("commands", {}), **cfg.get("avatar_actions", {})})
+    wake_words = cfg.get("wake_words", ["sparkle"])
+    commands = cfg.get("commands", {})
+
+    recognizer = VoskRecognizer(
+        model_path=cfg["vosk"]["model_path"],
+        audio_queue=audio_q,
+        text_queue=text_q,
+        wake_words=wake_words,
+        commands=commands
+    )
 
     # Command handler
     cmd_handler = CommandHandler(
         cfg.get("commands", {}),
-        cfg.get("avatar_actions", {}),
         tts,
         avatar
     )
 
     # Audio listener
-    audio_listener = AudioListener(audio_queue=audio_q, level_queue=level_q)
+    audio_listener = AudioListener(audio_queue=audio_q, level_queue=level_q, cmd_handler=cmd_handler)
 
     # --- Потоки ---
     t1 = threading.Thread(target=audio_listener.run, daemon=True)
