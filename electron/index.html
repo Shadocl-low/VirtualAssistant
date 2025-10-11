@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>Live2D Avatar</title>
+  <script src="./node_modules/pixi.js/dist/pixi.min.js"></script>
+  <script src="./node_modules/live2dcubismcore/live2dcubismcore.min.js"></script>
+  <script src="./node_modules/pixi-live2d-display/dist/cubism4.js"></script>
   <style>
     html, body {
       background: transparent;
@@ -17,7 +20,6 @@
   </style>
 </head>
 <body>
-<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
 
 <canvas id="live2d-canvas"></canvas>
 
@@ -29,15 +31,14 @@
     if (window.electronAPI) {
       console.log('🔌 Electron API available');
 
-      const PIXI = window.electronAPI.PIXI;
-      const Live2DModel = window.electronAPI.Live2DModel;
-
+      const Live2DModel = PIXI.live2d.Live2DModel;
       const loopingMotions = ['start'];
 
       let app = new PIXI.Application({
         view: document.getElementById("live2d-canvas"),
         transparent: true,
         autoStart: true,
+        backgroundAlpha: 0,
         width: window.innerWidth,
         height: window.innerHeight
       });
@@ -51,7 +52,7 @@
 
           // Добавляем timestamp для избежания кеширования
           const timestamp = new Date().getTime();
-          const modelUrl = `./model/Sparkle.model3.json?t=${timestamp}`;
+          const modelUrl = `model/Sparkle.model3.json?t=${timestamp}`;
 
           console.log(`📄 Loading model from: ${modelUrl}`);
           const loadedModel = await Live2DModel.from(modelUrl);

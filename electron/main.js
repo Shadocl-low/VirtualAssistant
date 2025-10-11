@@ -14,14 +14,15 @@ function createWindow() {
         frame: true,
         alwaysOnTop: true,
         webPreferences: {
+            sandbox: false,
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
         }
     });
 
-
-    win.loadURL("http://localhost:8000/index.html").catch(r => console.log(r.toString()));
+    // win.setIgnoreMouseEvents(true);
+    win.loadFile('index.html');
 
 }
 

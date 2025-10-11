@@ -1,14 +1,10 @@
 import sys
-import queue, threading, subprocess, yaml, time, websocket, json, http.server, socketserver
+import queue, threading, subprocess, yaml, time, websocket, json
 
 from recognizer_vosk import VoskRecognizer
 from audio_listener import AudioListener
 from command_handler import CommandHandler
 from tts_engine import TTSEngine
-
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl
 
 PORT = 8000
 
@@ -60,11 +56,6 @@ class AvatarClient:
                 print(f"🎬 Sent motion command: {motion_name}")
             except Exception as e:
                 print(f"❌ Error sending motion command: {e}")
-
-def run_server():
-    Handler = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        httpd.serve_forever()
 
 
 # --- Завантаження конфігурації ---
@@ -157,23 +148,14 @@ def main():
     return tts
 
 if __name__ == "__main__":
-    thread = threading.Thread(target=run_server, daemon=True)
-    thread.start()
-
-    app = QApplication(sys.argv)
-    window = QMainWindow()
-    view = QWebEngineView()
-
-    # завантажуємо через http://
-    view.load(QUrl(f"http://localhost:{PORT}/index.html"))
-
     tts_engine = main()
 
-    # Запускаємо головний цикл застосунку. Програма "зависне" тут до закриття вікна.
-    exit_code = app.exec_()
-
-    # Коли вікно закрите, код нижче виконається:
-    print("Застосунок закривається, зупиняємо TTS...")
-    tts_engine.shutdown()
-
-    sys.exit(exit_code)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nExiting...")
+    finally:
+        # Коли програма закривається (Ctrl+C), коректно зупиняємо TTS
+        print("Застосунок закривається, зупиняємо TTS...")
+        tts_engine.shutdown()
